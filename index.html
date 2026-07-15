@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BroRaa Messenger</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d65a88">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BroRaa">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/nzYKBJ1Q/play-store-icon-512.png">
+
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</head>
+<body>
+    <div id="auth-screen" class="modal-overlay">
+        <div class="auth-card" id="auth-step-1">
+            <h2>Who are you?</h2>
+            <p>Select your identity to start messaging</p>
+            <div class="auth-buttons">
+                <button id="btn-bro" class="auth-btn">Bro</button>
+                <button id="btn-raa" class="auth-btn">Raa</button>
+            </div>
+        </div>
+        
+        <div class="auth-card hidden" id="auth-step-2">
+            <h2 id="auth-welcome">Welcome</h2>
+            <p>Enter your password to continue</p>
+            <input type="password" id="auth-password" class="auth-input" placeholder="Password" autocomplete="off">
+            <p id="auth-error" class="auth-error hidden">Incorrect password. Try again.</p>
+            <div class="auth-buttons">
+                <button id="btn-auth-back" class="auth-btn secondary">Back</button>
+                <button id="btn-auth-submit" class="auth-btn">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="permission-screen" class="modal-overlay hidden" style="z-index: 1050;">
+        <div class="auth-card" style="max-width: 420px;">
+            <h2>App Setup</h2>
+            <p>To get the best experience, please allow the following permissions.</p>
+            
+            <div class="permission-item">
+                <div class="perm-info">
+                    <ion-icon name="notifications"></ion-icon>
+                    <div>
+                        <h4>Notifications</h4>
+                        <span>To know when you get a message or call</span>
+                    </div>
+                </div>
+                <button id="btn-perm-notif" class="perm-btn">Allow</button>
+            </div>
+
+            <div class="permission-item">
+                <div class="perm-info">
+                    <ion-icon name="camera"></ion-icon>
+                    <div>
+                        <h4>Camera & Mic</h4>
+                        <span>For video/audio calls and voice notes</span>
+                    </div>
+                </div>
+                <button id="btn-perm-media" class="perm-btn">Allow</button>
+            </div>
+
+            <button id="btn-perm-continue" class="auth-btn" style="margin-top: 25px; width: 100%;">Continue to App</button>
+        </div>
+    </div>
+
+    <div id="app-screen" class="app-container hidden">
+        <header class="chat-header">
+            <div class="user-info">
+                <div class="avatar" id="target-avatar">?</div>
+                <div class="status-details">
+                    <h3 id="target-name">Loading...</h3>
+                    <span id="target-status" class="offline">offline</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-search" title="Search"><ion-icon name="search-outline"></ion-icon></button>
+                <button id="btn-audio-call" title="Audio Call"><ion-icon name="call-outline"></ion-icon></button>
+                <button id="btn-video-call" title="Video Call"><ion-icon name="videocam-outline"></ion-icon></button>
+                <div class="dropdown">
+                    <button id="btn-menu" title="Menu"><ion-icon name="ellipsis-vertical"></ion-icon></button>
+                    <div class="dropdown-content hidden" id="menu-dropdown">
+                        <button id="btn-virtual-bro">Chat with Virtual Bro</button>
+                        <button id="btn-wallpaper">Change Wallpaper</button>
+                        <button id="btn-clear-cache">Clear Cache</button>
+                        <button id="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="search-bar" class="search-bar hidden">
+            <input type="text" id="search-input" placeholder="Search...">
+            <span id="search-count" class="search-count">0/0</span>
+            <button id="btn-search-up" class="nav-btn"><ion-icon name="chevron-up-outline"></ion-icon></button>
+            <button id="btn-search-down" class="nav-btn"><ion-icon name="chevron-down-outline"></ion-icon></button>
+            <button id="btn-close-search"><ion-icon name="close-outline"></ion-icon></button>
+        </div>
+        <div id="pinned-bar" class="pinned-bar hidden">
+            <ion-icon name="pin"></ion-icon>
+            <div class="pinned-content" id="pinned-content"></div>
+            <button id="btn-unpin"><ion-icon name="close"></ion-icon></button>
+        </div>
+
+        <main class="chat-window" id="chat-window">
+            <div id="loading-history" class="system-message hidden">Loading older messages...</div>
+            <div class="system-message">Secured end-to-end for Bro & Raa 🔒</div>
+            <div id="unread-jump" class="unread-jump hidden">↓ Jump to unread</div>
+        </main>
+
+        <div id="reply-preview" class="reply-preview hidden">
+            <div class="reply-content">
+                <span id="reply-user" class="reply-user"></span>
+                <span id="reply-text" class="reply-text"></span>
+            </div>
+            <button id="btn-cancel-action"><ion-icon name="close-circle"></ion-icon></button>
+        </div>
+        <div id="transfer-progress" class="transfer-progress hidden">
+            <span id="progress-text">Uploading...</span>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+
+        <footer class="input-tray">
+            <button id="btn-attach" title="Attach File/Image"><ion-icon name="attach-outline"></ion-icon></button>
+            <input type="file" id="file-input" class="hidden">
+            <input type="color" id="wallpaper-input" class="hidden">
+            <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off">
+            <button id="btn-mic" title="Tap to Record"><ion-icon name="mic-outline"></ion-icon></button>
+            <button id="btn-send" class="hidden"><ion-icon name="send"></ion-icon></button>
+        </footer>
+    </div>
+
+    <div id="virtual-bro-overlay" class="modal-overlay hidden" style="z-index: 1500;">
+        <div class="vb-header">
+            <h3>Virtual Bro</h3>
+            <div class="vb-actions">
+                <button id="btn-vb-fullscreen"><ion-icon name="expand"></ion-icon></button>
+                <button id="btn-vb-close"><ion-icon name="close"></ion-icon></button>
+            </div>
+        </div>
+        <iframe id="virtual-bro-iframe" src="" style="width: 100%; flex: 1; border: none; background: rgba(255,255,255,0.9);"></iframe>
+    </div>
+
+    <div id="call-screen" class="modal-overlay hidden">
+        <div class="call-card">
+            <div id="call-status-text" class="call-status">Calling...</div>
+            <div id="call-duration" class="call-duration hidden">00:00</div>
+            <div class="video-grid" id="video-grid">
+                <video id="remote-video" autoplay playsinline></video>
+                <video id="local-video" autoplay playsinline muted></video>
+            </div>
+            <div class="call-controls">
+                <button id="btn-toggle-mic" class="call-btn secondary"><ion-icon name="mic"></ion-icon></button>
+                <button id="btn-toggle-video" class="call-btn secondary"><ion-icon name="videocam"></ion-icon></button>
+                <button id="btn-switch-cam" class="call-btn secondary"><ion-icon name="camera-reverse"></ion-icon></button>
+                <button id="btn-toggle-speaker" class="call-btn secondary"><ion-icon name="volume-high"></ion-icon></button>
+                <button id="btn-fullscreen-call" class="call-btn secondary"><ion-icon name="expand"></ion-icon></button>
+                <button id="btn-accept-call" class="call-btn accept hidden"><ion-icon name="checkmark-circle"></ion-icon></button>
+                <button id="btn-hangup-call" class="call-btn hangup"><ion-icon name="close-circle"></ion-icon></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="image-viewer" class="modal-overlay hidden">
+        <button id="btn-download-viewer" class="download-viewer" title="Download"><ion-icon name="download-outline"></ion-icon></button>
+        <button id="btn-close-viewer" class="close-viewer"><ion-icon name="close"></ion-icon></button>
+        <img id="viewer-img" src="" alt="Fullscreen">
+    </div>
+
+    <div id="emoji-picker" class="emoji-picker hidden">
+        <span>👍</span><span>❤️</span><span>😂</span><span>😮</span><span>😢</span><span>🙏</span>
+    </div>
+    
+    <div id="toast" class="toast hidden">Message copied</div>
+
+    <div id="celebration-overlay" class="celebration-overlay">
+        <canvas id="celebration-canvas"></canvas>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
