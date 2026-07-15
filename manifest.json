@@ -1,0 +1,31 @@
+{
+  "name": "BroRaa Messenger",
+  "short_name": "BroRaa",
+  "description": "Private messenger for Bro and Raa",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fdf1f4",
+  "theme_color": "#d65a88",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/nzYKBJ1Q/play-store-icon-512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/nzYKBJ1Q/play-store-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/nzYKBJ1Q/play-store-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
